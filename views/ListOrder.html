@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order List</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+  <!-- Import Datatable sau jquery -->
+  <!-- Import them style bootstrap cho datatable -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
+  <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+
+</head>
+<body onload="onPageLoading()">
+  <div class="content">
+    <div class="container-fluid">
+      <div class="content">
+        <div class="container-fluid">
+          <div class="container mt-5">
+            <!-- header -->
+            <div class="row">
+              <div class="col-lg-12 col-md-12 text-center">
+                <h3>DANH SÁCH ĐƠN HÀNG</h3>
+                <hr style="
+                  width: 100%;
+                  height: .3px;
+                  background-color: rgb(172, 171, 171);
+                ">
+              </div>
+            </div>
+            <!-- filter -->
+            <div class="container-fluid jumbotron">
+              <div class="row">
+                <div class="col-lg-12 col-md-12 text-left">
+                  <h5><i class="fa-solid fa-filter"></i>&ensp;<b>Lọc bảng đơn hàng</b></h5>
+                </div>
+              </div>
+              <div class="row mt-4 mb-4 d-flex align-items-center justify-content-center">
+                <div class="col-lg-2 col-md-2 text-center">
+                  <label class="font-weight-bold" for="">Loại Pizza</label>
+                </div>
+                <div class="col-lg-3 col-md-3 text-left">
+                  <select name="" style="width: 100%;" class="form-control" id="select-pizatype-filter">
+                    <option value="none">All</option>
+                    <option value="Seafood">Hải sản</option>
+                    <option value="Hawaii">Hawaii</option>
+                    <option value="Bacon">Thịt hun khói</option>
+                  </select>
+                </div>
+
+                <div class="col-lg-2 col-md-2 text-center">
+                  <label class="font-weight-bold" for="">Trạng thái</label>
+                </div>
+                <div class="col-lg-3 col-md-3 text-left">
+                  <select name="" style="width: 100%;" class="form-control" id="select-status-filter">
+                    <option value="none">All</option>
+                    <option value="open">Open</option>
+                    <option value="cancel">Đã hủy</option>
+                    <option value="confirmed">Đã xác nhận</option>
+                  </select>
+                </div>
+                <div class="col-lg-2 col-md-2 text-left">
+                  <button id="btn-filter" class="btn btn-success text-light">Lọc dữ liệu</button>
+                </div>
+              </div>
+              <div class="row mt-2 mb-3">
+                <div class="col-lg-12 col-md-12 text-left">
+                  <button class="btn btn-warning" type="button" id="btn-adduser">
+                    <i class="fa-solid fa-square-plus"></i>
+                    Thêm Order
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Table -->
+            <div class="row">
+              <div class="container-fluid">
+                <table class="table table-striped table-bordered table-hover" id="table-order">
+                  <thead>
+                    <th>Order ID</th>
+                    <th>Kích cỡ combo</th>
+                    <th>Loại pizza</th>
+                    <th>Nước uống</th>
+                    <th>Thành tiền</th>
+                    <th>Họ và tên</th>
+                    <th>Số điện thoại</th>
+                    <th>Trạng thái</th>
+                    <th>Chi tiết</th>
+                  </thead>
+                </table>
+              </div>
+            </div>
+            <!-- modal add user -->
+            <div id="insert-user-modal" class="modal fade" tabindex="-1">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h2 class="modal-title">Thêm order</h2>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <!-- combo -->
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Chọn kích cỡ</label>
+                        <select name="" id="select-kich-co" class="form-control">
+                          <option value="none">Chọn một kích cỡ pizza</option>
+                          <option value="s">Small</option>
+                          <option value="m">Medium</option>
+                          <option value="l">Large</option>
+                        </select>
+                      </div>
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Đường kính pizza</label>
+                        <input name="combo" id="input-duongkinh" type="text" class="form-control" disabled />
+                      </div>
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Sường nướng (miếng)</label>
+                        <input name="combo" id="input-suonnuong" type="text" class="form-control" disabled />
+                      </div>
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Salad (g)</label>
+                        <input name="combo" id="input-salad" type="text" class="form-control" disabled />
+                      </div>
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Số lượng nước uống</label>
+                        <input name="combo" id="input-soluongnuoc" type="text" class="form-control"
+                          disabled />
+                      </div>
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Thành tiền</label>
+                        <input name="combo" id="input-thanhtien" type="text" class="form-control" disabled />
+                      </div>
+                      <!-- pizza type -->
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Chọn loại pizza</label>
+                        <select name="" id="select-loai-pizza" class="form-control">
+                          <option value="none">Chọn một loại pizza</option>
+                          <option value="Seafood">Hải sản</option>
+                          <option value="Hawaii">Hawaii</option>
+                          <option value="Bacon">Thịt hun khói</option>
+                        </select>
+                      </div>
+                      <!-- loai nuoc uong -->
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Chọn Nước</label>
+                        <select name="" id="select-nuoc-uong" class="form-control">
+                          <option value="none">Chọn một loại nước uống</option>
+                        </select>
+                      </div>
+                      <!-- info customer -->
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Họ và tên</label>
+                        <input id="input-hovaten" type="text" class="form-control" />
+                      </div>
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Email</label>
+                        <input id="input-email" type="text" class="form-control" />
+                      </div>
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Số diện thoại</label>
+                        <input id="input-sodienthoai" type="text" class="form-control" />
+                      </div>
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Địa chỉ</label>
+                        <input id="input-diachi" type="text" class="form-control" />
+                      </div>
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Voucher ID (mã voucher)</label>
+                        <input id="input-voucherid" type="text" class="form-control" />
+                      </div>
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Lời nhắn</label>
+                        <input id="input-loinhan" type="text" class="form-control" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn btn-primary" id="btn-insert-user">Insert User</button>
+                    <button class="btn btn-secondary" id="btn-insert-cancel" data-dismiss="modal">Hủy
+                      bỏ</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- modal edit user -->
+            <div id="edit-user-modal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+              aria-labelledby="myLargeModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h2 class="modal-title">Update Order !!</h2>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Order ID (mã đơn hàng)</label>
+                        <input name="edit" id="input-orderid" type="text" class="form-control " disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Cỡ combo</label>
+                        <input name="edit" id="select-cocombo" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Đường kính pizza</label>
+                        <input name="edit" id="input-duongkinh" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Sường nướng (miếng)</label>
+                        <input name="edit" id="input-suonnuong" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Salad (g)</label>
+                        <input name="edit" id="input-salad" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Loại pizza</label>
+                        <input name="edit" id="input-loaipizza" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Voucher ID (mã voucher)</label>
+                        <input name="edit" id="input-voucherid" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Thành tiền</label>
+                        <input name="edit" id="input-thanhtien" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Giảm giá (discount)</label>
+                        <input name="edit" id="input-giamgia" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Đồ uống</label>
+                        <input name="edit" id="select-douong" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Số lượng nước uống</label>
+                        <input name="edit" id="input-soluongnuoc" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Họ và tên</label>
+                        <input name="edit" id="input-hovaten" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Email</label>
+                        <input name="edit" id="input-email" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Số diện thoại</label>
+                        <input name="edit" id="input-sodienthoai" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Địa chỉ</label>
+                        <input name="edit" id="input-diachi" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Lời nhắn</label>
+                        <input name="edit" id="input-loinhan" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Trạng thái đơn hàng</label>
+                        <input name="edit" id="input-trangthai" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Ngày tạo đơn</label>
+                        <input name="edit" id="input-ngaytaodon" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <label class="font-weight-bold" for="">Ngày cập nhật</label>
+                        <input name="edit" id="input-ngaycapnhat" type="text" class="form-control" disabled />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn btn-primary" id="btn-open">Open</button>
+                    <button class="btn btn-success" id="btn-confirm">Confirm</button>
+                    <button class="btn btn-secondary" id="btn-cancel">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- modal confirm delete -->
+            <div>
+              <div class="modal fade" tabindex="-1" id="delete-confirm-modal">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="h5-modal-title">Order Delete Confirmation</h5>
+                      <button class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                      <label class="font-weight-bold">Bạn có chắc chắn muốn xóa Order này không?</label>
+                    </div>
+                    <div class="modal-footer">
+                      <button class="btn btn-danger" id="btn-confirm-delete-voucher">Confirm</button>
+                      <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="./admin.js"></script>
+</html>
